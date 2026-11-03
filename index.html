@@ -1,0 +1,293 @@
+<title>Sherry Energy Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky masthead + tab bar; Edition tab = price strip, fuel selector, story list per fuel */
+:root{
+  --bg:#f3f6f8; --panel:#ffffff; --fg:#13222c; --muted:#5a6b76; --line:#d6dee4;
+  --accent:#0b6e7f; --accent-fg:#ffffff; --good:#17794a; --warn:#a85d00; --bad:#b3261e;
+  --chip:#e6eef2;
+  --f-display:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d171d; --panel:#14222a; --fg:#e4edf1; --muted:#93a5b0; --line:#25363f;
+  --accent:#4cc0d3; --accent-fg:#06222a; --good:#4fcf8f; --warn:#f0a63c; --bad:#ff8a80; --chip:#1d2f38; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d171d; --panel:#14222a; --fg:#e4edf1; --muted:#93a5b0; --line:#25363f;
+  --accent:#4cc0d3; --accent-fg:#06222a; --good:#4fcf8f; --warn:#f0a63c; --bad:#ff8a80; --chip:#1d2f38; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1040px;margin:0 auto}
+header.mast{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between}
+h1{font:700 26px/1.15 var(--f-display);margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px;max-width:60ch}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+nav.tabs a{padding:10px 14px;font:600 14px var(--f-display);color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--fg);border-color:var(--accent)}
+nav.tabs a:focus-visible,.chip:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-top:20px}
+h2{font:700 20px/1.2 var(--f-display);margin:0 0 4px}
+h3{font:600 16px/1.3 var(--f-display);margin:0}
+.meta{font:12px var(--f-mono);color:var(--muted)}
+.notice{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--warn);padding:12px 14px;border-radius:6px;font-size:13.5px;margin-bottom:18px}
+.strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:14px 0 18px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 11px;text-align:left;cursor:pointer;color:inherit;font:inherit;min-width:0}
+.tile .n{font:600 12px var(--f-display);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tile .p{font:500 17px var(--f-mono);font-variant-numeric:tabular-nums;margin-top:2px}
+.tile .d{font-size:11.5px;color:var(--muted)}
+.tile[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:16px}
+.sec header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;margin-bottom:10px}
+.price{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+.price b{color:var(--accent)}
+.insight{background:var(--chip);border-radius:6px;padding:9px 12px;font-size:13.5px;margin:8px 0 12px}
+.insight strong{font:600 11px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block}
+ol.stories{list-style:none;margin:0;padding:0;display:grid;gap:0}
+ol.stories li{padding:11px 0;border-top:1px solid var(--line);min-width:0}
+ol.stories li:first-child{border-top:0}
+.st-h{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.st-h a{font:600 15px/1.35 var(--f-display);color:var(--fg);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;overflow-wrap:anywhere}
+.st-h a:hover{text-decoration-color:var(--accent)}
+.st-b{margin:3px 0 0;color:var(--fg);font-size:14px}
+.st-m{margin-top:3px;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center}
+.badge{font:500 11px var(--f-mono);padding:1px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.badge.x{color:var(--good);border-color:var(--good)} .badge.s{color:var(--warn);border-color:var(--warn)} .badge.c{color:var(--bad);border-color:var(--bad)}
+.gap{font-size:13px;color:var(--muted);margin-top:8px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+select{font:14px var(--f-body);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 10px;max-width:100%}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;min-width:0}
+.card p{margin:6px 0 0;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-top:0}
+.scroll{overflow-x:auto}
+ul.plain{padding-left:18px;margin:6px 0}
+ul.plain li{margin:4px 0}
+.up{color:var(--bad)} .dn{color:var(--good)}
+footer{margin-top:30px;color:var(--muted);font-size:12.5px}
+.hero{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:16px}
+.hero p{margin:6px 0 0;max-width:68ch}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <h1>Sherry Energy Desk</h1>
+      <div class="sub">Daily marine fuel and energy news for Golden Island: bunkers, biofuels, methanol, LNG, LPG, ammonia and gasoil.</div>
+    </div>
+    <div class="meta" id="edmeta"></div>
+  </header>
+  <nav class="tabs" id="tabs" aria-label="Sections">
+    <a href="#edition">Edition</a><a href="#changes">What changed</a><a href="#archive">Archive</a><a href="#brief">Management brief</a>
+  </nav>
+  <main id="main"></main>
+  <footer>Prices are indicative and quoted from the named sources, which often disagree. Confirm with a live assessment before fixing a deal. Not trading advice.</footer>
+</div>
+
+<script>
+/* ---------- DATA: one object per edition. Newest first. A daily run prepends a new object. ---------- */
+const EDITIONS=[{
+id:"2026-11-03", date:"Tue 3 Nov 2026", slug:"3 Nov 2026",
+mode:"Web-search edition",
+notice:"This edition was compiled from web search results only. The source sites (Maritime Executive, Manifold Times, S&P Global, Straits Times, CNA, Business Times) could not be opened directly from the build environment, so stories are tagged by how many independent sources back them. Search dates are sometimes inconsistent; where a date is unclear it is marked.",
+headline:"Hormuz risk keeps Brent near $104–114 and Singapore VLSFO close to $1,000/t, about 20% above a month ago.",
+top3:[
+ "Singapore VLSFO fell to $961/t on 2 Nov (ENGINE) but sits near $1,003/t on Ship & Bunker's table. A month earlier ENGINE had it at $793/t.",
+ "Brent eased toward $104 on hopes of a US-Iran deal on reopening the Strait of Hormuz. Goldman puts the risk premium near $27/bbl.",
+ "Golden Island is one of three MPA-licensed methanol bunker suppliers for 2026–2030, yet Singapore recorded no methanol bunker sales for seven straight months to September."],
+spnote:"S&P Global Platts figures used here (JKM, gasoil swap crack) were read from secondary pages, not from Platts itself. Treat them as pointers and check the Platts screen.",
+prices:[
+ {k:"vlsfo",lab:"LSFO / VLSFO",val:"$961–1,013/t",d:"Singapore, 2 Nov – 31 Oct"},
+ {k:"b24",lab:"B24",val:"n/a",d:"no current quote found"},
+ {k:"b30",lab:"B30",val:"n/a",d:"no current quote found"},
+ {k:"b100",lab:"B100 / UCOME",val:"n/a",d:"no current quote found"},
+ {k:"meoh",lab:"Methanol",val:"n/a",d:"no Singapore quote found"},
+ {k:"etoh",lab:"Ethanol",val:"$1.79–2.39/gal",d:"CBOT vs Santos FOB"},
+ {k:"lpg",lab:"LPG (Saudi CP)",val:"C3 $680 / C4 $730",d:"Oct CP, per t"},
+ {k:"lng",lab:"LNG (JKM)",val:"$31–34/MMBtu",d:"24–30 Oct"},
+ {k:"nh3",lab:"Ammonia",val:"n/a",d:"no marine quote found"},
+ {k:"go",lab:"Gasoil / MGO",val:"MGO $1,263/t",d:"Singapore, 2 Nov"}
+],
+sections:[
+{k:"vlsfo",name:"LSFO / VLSFO (and HSFO)",
+ price:"Singapore VLSFO <b>$961/t</b> (ENGINE, 2 Nov) · <b>$1,003.50/t</b> (Ship &amp; Bunker, 2 Nov) · <b>$1,013/t</b> (BigMint, week to 31 Oct). Spread of about $40–50 is method and timing. Brent about $104.",
+ insight:"Prices have rebuilt about $170/t in a month (ENGINE had VLSFO at $793 on 1 Oct) on tight fuel oil supply and Middle East disruption. Falls over the weekend were driven by deal hopes, not by easing physical supply.",
+ stories:[
+ {t:"Singapore VLSFO down $37 over the weekend to $961/t, lowest in a week",u:"https://www.engine.online/news/singapores-lsmgo-price-drops-most-vlsfo-b30-vlsfo-and-hsfo-also-fall-over-the-weekend-837d",s:"ENGINE",d:"2 Nov",b:"LSMGO fell most; B30-VLSFO and HSFO also lower.",v:"x"},
+ {t:"Ship & Bunker table: Singapore VLSFO $1,003.50 (-$16), MGO $1,263",u:"https://shipandbunker.com/prices",s:"Ship & Bunker",d:"2 Nov",b:"Brent around $104/bbl on the same day.",v:"x"},
+ {t:"Global bunker markets diverge week on week as Singapore VLSFO breaches $1,000/t",u:"https://www.bigmint.co/insights/detail/global-bunker-markets-diverge-w-o-w-as-singapore-vlsfo-breaches-1000-t-804445",s:"BigMint",d:"week to 31 Oct",b:"Up $55 (5.7%) to $1,013/t. Cause given: tight fuel oil availability and Middle East supply concerns.",v:"x"},
+ {t:"Oil slides on Hormuz deal hopes but Trump keeps Iran strikes on the table",u:"https://www.euronews.com/2026/11/02/oil-slides-on-hormuz-deal-hopes-but-trump-keeps-iran-strikes-on-the-table",s:"Euronews",d:"2 Nov",b:"Iranian negotiators met in Qatar on a reopening plan. Brent about $108.5 that morning; Goldman estimates a risk premium near $27/bbl.",v:"x"},
+ {t:"Singapore bunker sales down about 1% on year in September 2026",u:"https://www.manifoldtimes.com/news/singapore-bunker-fuel-sales-down-by-1-on-year-in-september-2026/",s:"Manifold Times",d:"Oct",b:"Totals differ by source (4.59–4.73 Mt). Nine-month sales are up 1.8–3% on year. October MPA data is due mid-November.",v:"c"}
+ ]},
+{k:"b24",name:"B24",
+ price:"No current B24 price found in this run.",
+ insight:"B24 remains the standard biofuel blend offered in Asian hubs while suppliers hold back on B30.",
+ stories:[
+ {t:"B24 still dominates Asian biofuel market as B30 faces supplier pushback",u:"https://shipandbunker.com/news/world/309771-b24-still-dominates-asian-biofuel-market-as-b30-faces-supplier-pushback",s:"Ship & Bunker",d:"date unclear",b:"Suppliers cite fuel stability, performance and spec-guarantee concerns for B30.",v:"s"},
+ {t:"Singapore biofuel blend sales rose 48% in August to 57,000 mt",u:"https://www.manifoldtimes.com/news/engine-on-biofuel-bunker-snapshot-b30-vlsfo-prices-drop-across-global-hubs",s:"ENGINE via Manifold Times",d:"about 6 weeks old",b:"Highest monthly volume since April.",v:"s"},
+ {t:"Biofuel blend sales in Singapore grew from 0.52 Mt (2023) to 0.88 Mt (2024)",u:"https://www.seatrade-maritime.com/bunkering/vitol-bunkers-completes-first-delivery-of-b30-biofuel-in-singapore",s:"Seatrade Maritime",d:"2025",b:"Context for the current volume trend.",v:"s"}
+ ],gap:"Fewer than five relevant items found. No October data on B24 pricing or volumes."},
+{k:"b30",name:"B30",
+ price:"No current B30 price found. ENGINE's last snapshot (about six weeks old) had Singapore B30-VLSFO down $56/t in a week while VLSFO rose $5.",
+ insight:"B30 is permitted without separate MPA approval since 7 Mar 2025, but commercial uptake is slower than the regulation allows.",
+ stories:[
+ {t:"MPA raises biofuel blend limit for licensed bunker tankers from B25 to B30",u:"https://www.marineinsight.com/singapore-raises-biofuel-blend-limits-for-licensed-bunker-tankers-to-b30/",s:"Marine Insight",d:"Mar 2025",b:"Effective 7 March 2025. Blends above B30 still need approval for pilots and trials.",v:"x"},
+ {t:"Vitol Bunkers completes first B30 delivery in Singapore",u:"https://www.seatrade-maritime.com/bunkering/vitol-bunkers-completes-first-delivery-of-b30-biofuel-in-singapore",s:"Seatrade Maritime",d:"Mar 2025",b:"1,100 t to a vehicle carrier from the Marine Future barge (about 7,000 t biofuel capacity).",v:"x"},
+ {t:"Singapore approves B30 bunkering in Type I barges",u:"https://www.argusmedia.com/en/news-and-insights/latest-market-news/2665803-singapore-approves-b30-bunkering-in-type-i-barges",s:"Argus Media",d:"2025",b:"Widens the barge fleet able to deliver B30.",v:"s"},
+ {t:"ENGINE biofuel snapshot: B30-VLSFO prices drop across global hubs",u:"https://www.manifoldtimes.com/news/engine-on-biofuel-bunker-snapshot-b30-vlsfo-prices-drop-across-global-hubs",s:"Manifold Times",d:"about 6 weeks old",b:"B30 UCOME blend price fell $56/t in a week.",v:"s"}
+ ],gap:"Four items; most are 2025. No new B30 news found for the past week."},
+{k:"b100",name:"B100 / UCOME",
+ price:"No UCOME or B100 price found in this run.",
+ insight:"B100 remains trial territory in Singapore. B30 itself is UCOME-based, so UCOME supply and price feed through to every blend.",
+ stories:[
+ {t:"Norden completes first B100 biofuel bunkering in Singapore",u:"https://biofuels-news.com/news/norden-completes-first-b100-biofuel-bunkering-in-singapore/",s:"Biofuels International",d:"May 2024",b:"First B100 delivery in the port.",v:"s"},
+ {t:"Vitol's Marine Future can supply blends from B24 up to B100",u:"https://www.rivieramm.com/news-content-hub/new-bunker-tanker-delivers-b30-biofuel-blend-in-singapore-80207",s:"Riviera",d:"2025",b:"102.6 m barge, about 7,000 t biofuel capacity.",v:"s"}
+ ],gap:"Only two items, both older. Nothing newer found on UCOME or B100."},
+{k:"meoh",name:"Methanol",
+ price:"No Singapore methanol bunker price found. A SIBCON 2026 panel said Singapore may not match Shanghai's integrated green methanol chain on price.",
+ insight:"Licences are in place but demand is not. Seven months with zero methanol bunker sales in Singapore weakens the near-term case for barge investment.",
+ stories:[
+ {t:"Singapore locks in methanol suppliers: Global Energy Trading, Golden Island and PetroChina",u:"https://splash247.com/singapore-locks-in-methanol-suppliers-for-2026-takeoff/",s:"Splash247",d:"licences 1 Jan 2026 to 31 Dec 2030",b:"Golden Island is one of the three licensed suppliers.",v:"x"},
+ {t:"No methanol bunker sales in Singapore in September, seventh month in a row",u:"https://shipandbunker.com/news/apac/938720-shanghai-outpaced-singapore-in-methanol-bunker-sales-in-2025",s:"Ship & Bunker",d:"Oct",b:"Shanghai supplied about 10,000 mt of domestic green methanol in 2025 against about 3,000 mt in Singapore.",v:"x"},
+ {t:"Alternative-fuel ships outpace port readiness, LR report finds",u:"https://allaboutshipping.co.uk/2026/11/02/alternative-fuel-ships-outpace-port-readiness-new-lr-report-finds/",s:"All About Shipping",d:"2 Nov",b:"1,942 alternative-fuel-capable ships on order. Methanol bunkering is available at only 25 ports.",v:"s"},
+ {t:"PetroChina adds methanol bunker tanker to Singapore fleet",u:"https://shipandbunker.com/news/apac/265317-petrochina-adds-methanol-bunker-tanker-to-fleet-in-singapore",s:"Ship & Bunker",d:"date unclear",b:"Adds physical delivery capacity in Singapore.",v:"s"},
+ {t:"LA and Long Beach name LNG and methanol as key marine fuels",u:"https://dataportuaria.com/en/destacadas/los-angeles-and-long-beach-identify-lng-and-methanol-as-key-marine-fuels-a43a76",s:"DataPortuaria",d:"recent",b:"Joint port study of short and medium-term fuel options.",v:"s"}
+ ]},
+{k:"etoh",name:"Ethanol",
+ price:"Chicago ethanol about <b>$1.79/gal</b> (Trading Economics, 2 Nov). Brazil Santos anhydrous about <b>$2.39/gal</b>, Gulf about <b>$2.30/gal</b> (Grains.org, 30 Sep). Different benchmarks and dates, so not comparable.",
+ insight:"Ethanol is a peripheral line for a marine fuel desk. It matters through gasoline blending, biofuel feedstock competition and SAF policy.",
+ stories:[
+ {t:"Chicago ethanol futures up 29% this year as Iran war lifts petrol prices",u:"https://kalkine.com.au/news/economic-news/ethanol-price-2026-chicago-futures-up-29-this-year-iran-war-turns-biofuel-into-a-bargain",s:"Kalkine",d:"recent",b:"US exports running 12% ahead of last year's record in H1.",v:"s"},
+ {t:"Brazil raises mandatory petrol ethanol blend from 30% to 32% for 180 days",u:"https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Biofuels+Annual_Brasilia_Brazil_BR2026-0034.pdf",s:"USDA FAS",d:"July 2026",b:"Could leave less Brazilian ethanol for export.",v:"s"},
+ {t:"Ethanol market and pricing report",u:"https://grains.org/wp-content/uploads/2026/09/Ethanol-Market-and-Pricing-Report-09302026.pdf",s:"US Grains Council",d:"30 Sep",b:"Santos FOB about $2.39/gal, Gulf about $2.30/gal.",v:"s"},
+ {t:"Brazil launches sustainable aviation fuel programme",u:"https://www.energyprices.net/country-guides/brazils-fuel-of-the-future-how-e30-ethanol-mandates-and-bioenergy-are-reshaping-latin-americas-largest-energy-market/",s:"EnergyPrices.net",d:"2026",b:"Book-and-claim and certification; alcohol-to-jet is an eligible route.",v:"s"}
+ ],gap:"No ethanol marine-fuel news found. Items are single-source."},
+{k:"lpg",name:"LPG",
+ price:"Saudi Aramco October CP: propane <b>$680/t</b>, butane <b>$730/t</b> (up $55 and $70 on September). Unchanged in Fearnleys' week 44 report. VLGC freight softening, recent fixtures below $315/t.",
+ insight:"Hormuz disruption cut Middle East LPG shipments to under half of pre-war levels. Record US propane exports are filling the gap, and long voyages keep freight high. The November CP announcement is the next signal.",
+ stories:[
+ {t:"LPG prices 2026: Hormuz losses, record US propane exports and Saudi CP",u:"https://www.alupetra.com/insights/lpg-market-2026.html",s:"Alupetra",d:"Oct",b:"Flags whether Aramco's November CP extends October's rise.",v:"s"},
+ {t:"Aramco CP October 2026: LPG benchmark prices rise",u:"https://mizanest.com/aramco-cp-october-2026_en/",s:"Mizanest",d:"Oct",b:"Propane $680/t and butane $730/t.",v:"x"},
+ {t:"Fearnleys weekly report, week 44",u:"https://fearnpulse.com/",s:"Fearnleys",d:"28 Oct",b:"VLGC freight gradually softer; CP unchanged week on week.",v:"x"},
+ {t:"LPG and petchem market report",u:"https://www.optimashipbroking.com/market-report/lpg-petchem-market-report-19-october-2026/",s:"Optima Shipbroking",d:"19 Oct",b:"Tight tonnage; Handy segment rates heading for near-record levels.",v:"s"}
+ ],gap:"Four items. Asian LPG spot assessments were not found (S&P pages returned were from 2021)."},
+{k:"lng",name:"LNG",
+ price:"JKM <b>$32.84/MMBtu</b> (Trading Economics, 30 Oct). Other trackers: $34.01 (28 Oct), $31.42 (24 Oct). About triple a year ago on one source. JKM is a Platts assessment.",
+ insight:"Hormuz disruption has pushed Asian spot LNG sharply higher. Higher LNG prices narrow LNG's discount to VLSFO as a marine fuel, which matters for dual-fuel ship operators.",
+ stories:[
+ {t:"LNG Japan/Korea Marker (JKM) price and history",u:"https://tradingeconomics.com/commodity/liquefied-natural-gas-japan-korea",s:"Trading Economics",d:"30 Oct",b:"Up 2.51% on the day to $32.84.",v:"x"},
+ {t:"Alternative-fuel ships outpace port readiness, LR report finds",u:"https://allaboutshipping.co.uk/2026/11/02/alternative-fuel-ships-outpace-port-readiness-new-lr-report-finds/",s:"All About Shipping",d:"2 Nov",b:"LNG bunkering is available at 222 ports.",v:"s"},
+ {t:"IPEC 2026: Zhoushan showcases biofuel, LNG, methanol and ammonia bunkering",u:"https://www.manifoldtimes.com/news/ipec-2026-zhoushan-showcases-growing-leadership-in-biofuel-lng-methanol-and-ammonia-bunkering/",s:"Manifold Times",d:"recent",b:"Zhoushan positions itself as a multi-fuel hub.",v:"s"},
+ {t:"ABS approves concept design of 22,000 cbm LNG bunker vessel from Hanwha",u:"https://www.hellenicshippingnews.com/the-week-in-alt-fuels-building-the-bunker-menu/",s:"Hellenic Shipping News",d:"date unclear",b:"Larger LNG bunker vessels in the pipeline.",v:"s"}
+ ],gap:"Four items. No Singapore LNG bunker price found."},
+{k:"nh3",name:"Ammonia",
+ price:"No marine ammonia price found in this run.",
+ insight:"The rules are arriving ahead of the product. Singapore has a code of practice and a first trial behind it, but commercial ammonia bunkering has happened at only one port worldwide, per LR.",
+ stories:[
+ {t:"MPA and Enterprise Singapore release TR 148:2026 code of practice for ammonia bunkering",u:"https://ammoniaenergy.org/articles/code-of-practice-for-ammonia-bunkering-released-for-singapore/",s:"Ammonia Energy Association",d:"Oct (exact date unclear)",b:"Sets safety and operating requirements within the Port of Singapore.",v:"s"},
+ {t:"MPA authorises ITOCHU's ZETA Bunkering for first ship-to-ship ammonia trial",u:"https://montlinechartering.com/intelligence/2026-05-24-singapore-ammonia.html",s:"Montline Chartering",d:"authorised 27 Apr, operations from 15 May 2026",b:"First ammonia bunkering trial in Singapore.",v:"s"},
+ {t:"Keppel-led consortium appointed for ammonia power and bunkering on Jurong Island",u:"https://www.edb.gov.sg/en/news-and-insights/keppel-led-consortium-appointed-for-next-phase-of-ammonia-power-and-bunkering-project-on-jurong-island",s:"EDB",d:"Oct 2025",b:"55–65 MW power and at least 0.1 Mtpa bunkering capacity. No final investment decision yet.",v:"x"},
+ {t:"Sumitomo, K Line and NYK sign MoU on new ammonia bunkering vessel for Singapore",u:"https://www.nyk.com/english/news/2026/20260317_01.html",s:"NYK",d:"17 Mar 2026",b:"Joint study of a newbuild ammonia bunker vessel.",v:"x"},
+ {t:"World's first ammonia port-to-ship bunkering for a dual-fuel gas carrier wraps up in Korea",u:"https://www.offshore-energy.biz/worlds-first-ammonia-port-to-ship-bunkering-for-dual-fuel-gas-carrier-wraps-up-in-korea/",s:"Offshore Energy",d:"2026",b:"LR counts Ulsan (April 2026) as the only commercial ammonia bunkering so far; Zhoushan also reports a ship-to-ship green ammonia operation.",v:"s"}
+ ]},
+{k:"go",name:"Gasoil / MGO",
+ price:"Singapore MGO <b>$1,263/t</b> (Ship &amp; Bunker, 2 Nov). Nymex gasoil about <b>$1,394/t</b>, +5.7% on 3 Nov (Bloomberg page). Singapore 10ppm gasoil crack just over <b>$54/bbl</b>, three-month low (secondary report, unverified).",
+ insight:"Platts assessed the second-month Singapore gasoil swap crack at a record $71.61/bbl on 19 Aug, since surpassed on 16 Sep. A $54 crack is down from that peak but still very high by historic standards ($14–21 in 2024–25 reports).",
+ stories:[
+ {t:"Singapore LSMGO drops most among bunker grades over the weekend",u:"https://www.engine.online/news/singapores-lsmgo-price-drops-most-vlsfo-b30-vlsfo-and-hsfo-also-fall-over-the-weekend-837d",s:"ENGINE",d:"2 Nov",b:"MGO led the fall.",v:"x"},
+ {t:"Bloomberg energy markets: Nymex gasoil about $1,394/t",u:"https://www.bloomberg.com/energy",s:"Bloomberg",d:"3 Nov",b:"Up about 5.7% on the day, with Brent about $104.",v:"s"},
+ {t:"Asia gasoil crack falls to more than three-month low near $54/bbl",u:"https://www.itiger.com/news/2532781036",s:"Reuters via aggregator",d:"late Oct",b:"Could not confirm the original Reuters report.",v:"c"},
+ {t:"Platts: Singapore gasoil swap crack at record $71.61/bbl",u:"https://www.spglobal.com/commodity-insights/en/news-research/latest-news/crude-oil/082124-singapore-gasoil-swap-crack-hits-near-3-month-low-as-regional-stocks-remain-long",s:"S&P Global Platts (cited)",d:"19 Aug, surpassed 16 Sep",b:"Figures quoted via a secondary page. China had not restricted product exports at the time.",v:"s"}
+ ],gap:"Four items. Several are secondary reports. Check the Platts GO10 assessment for a firm number."}
+]}];
+const CHANGES={
+"2026-11-03":{intro:"First edition, so this is a baseline. Changes below compare against the oldest reference points found in search.",
+ rows:[
+ ["VLSFO Singapore","$793/t (ENGINE, 1 Oct)","$961–1,013/t","up","About +$170 to +$220 in a month"],
+ ["Brent","$117–118 peak in October","$104–109","down","Eased on Hormuz deal hopes; still about 60% above a year ago"],
+ ["Saudi CP propane","$625/t (implied, Sep)","$680/t","up","+$55 in October CP"],
+ ["Saudi CP butane","$660/t (implied, Sep)","$730/t","up","+$70 in October CP"],
+ ["VLGC freight","Near records (Sep)","Below $315/t","down","Gradually softening, week 44"],
+ ["JKM","$31.42 (24 Oct)","$32.84 (30 Oct)","up","About +4.5% in a week"],
+ ["Singapore methanol bunker sales","0 mt","0 mt","flat","Seventh month with no sales"],
+ ["Gasoil 10ppm crack","$71.61 swap record (Aug–Sep)","about $54","down","Three-month low, unverified"]
+ ],
+ notes:["New this edition: Golden Island's methanol licence, the LR port-readiness report (2 Nov) and the TR 148:2026 ammonia code of practice are now tracked.","Not yet covered: B24, B30, UCOME and methanol prices. No quotable source was reachable."]}
+};
+const BRIEF={
+ title:"Why use the Energy Desk",
+ lede:"One page replaces a morning of checking a dozen sites. It tells you what moved, why, and how sure we are.",
+ cards:[
+ ["One read instead of many","Top stories per fuel grade from trade press, wire services, regional news and S&P Platts references sit on one page, grouped by the products Golden Island trades. Maritime Executive, Manifold Times, ENGINE, Ship & Bunker and the Singapore dailies are all in scope."],
+ ["Every story shows how well it is checked","Each item carries a tag: cross-checked (two or more independent sources), single source, or conflicting. Where sources disagree on a price, both figures are shown instead of one being picked quietly."],
+ ["Prices next to the news","The price strip sits above each fuel's stories, with source and date. Spreads between sources (for example $961 vs $1,003 VLSFO on 2 Nov) are visible, so nobody is surprised by a different screen."],
+ ["What changed since yesterday","The What changed tab lists price and story movements against the previous edition, so a manager can read two minutes and stop."],
+ ["Archive you can navigate","Every edition is kept. Pick any date and the page, prices and tags show as they were published, which helps when reviewing a decision."],
+ ["Built around Golden Island's business","Methanol licence status, B30 uptake in Singapore, tanker freight and Hormuz exposure are called out because they bear on a product tanker owner and physical supplier."]
+ ],
+ limits:[
+ "Current edition is built from web search only. Direct reading of Maritime Executive, Manifold Times, S&P and the Singapore dailies needs those domains allowed in the build environment.",
+ "Prices are indicative. Biofuel, methanol and ammonia marine prices were not available from free sources; they need a subscription feed (Platts, Argus or Ship & Bunker) to be quoted.",
+ "Search timestamps can be inconsistent, so undated items are labelled instead of guessed."],
+ link:"https://sherry-energy-desk.golden-islan-7474.chatgpt.site/"
+};
+/* ---------- RENDER ---------- */
+const $=s=>document.querySelector(s);
+const VT={x:["x","cross-checked"],s:["s","single source"],c:["c","conflicting / unverified"]};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let cur=EDITIONS[0].id, fuel="all";
+function ed(){return EDITIONS.find(e=>e.id===cur)||EDITIONS[0]}
+function route(){
+  const h=(location.hash||"#edition").slice(1);
+  const [tab,arg]=h.split("--");
+  if(arg&&EDITIONS.some(e=>e.id===arg))cur=arg;
+  const t=["edition","changes","archive","brief"].includes(tab)?tab:"edition";
+  document.querySelectorAll("#tabs a").forEach(a=>a.setAttribute("aria-current",a.getAttribute("href")==="#"+t?"page":"false"));
+  $("#edmeta").textContent="Edition: "+ed().date+" · "+ed().mode;
+  ({edition:vEdition,changes:vChanges,archive:vArchive,brief:vBrief})[t]();
+}
+function picker(){return `<div class="bar"><label for="edsel" class="meta">Edition</label><select id="edsel">${EDITIONS.map(e=>`<option value="${e.id}" ${e.id===cur?"selected":""}>${e.date}</option>`).join("")}</select></div>`}
+function wirePicker(tab){const s=$("#edsel");if(s)s.onchange=()=>{cur=s.value;location.hash="#"+tab+"--"+cur;route()}}
+function story(s){const v=VT[s.v];return `<li><div class="st-h"><a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t)}</a></div><p class="st-b">${esc(s.b)}</p><div class="st-m"><span class="badge ${v[0]}">${v[1]}</span><span class="meta">${esc(s.s)} · ${esc(s.d)}</span></div></li>`}
+function vEdition(){
+  const e=ed();
+  $("#main").innerHTML=picker()+
+  `<div class="hero"><h2>${esc(e.headline)}</h2><p class="meta">${esc(e.date)}</p><ul class="plain">${e.top3.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div class="notice">${esc(e.notice)}</div>
+  <div class="strip" role="group" aria-label="Fuel grades">
+   <button class="tile" data-k="all" aria-pressed="${fuel==="all"}"><div class="n">All fuels</div><div class="p">${e.sections.length}</div><div class="d">sections</div></button>
+   ${e.prices.map(p=>`<button class="tile" data-k="${p.k}" aria-pressed="${fuel===p.k}"><div class="n">${esc(p.lab)}</div><div class="p">${esc(p.val)}</div><div class="d">${esc(p.d)}</div></button>`).join("")}</div>
+  <div id="secs"></div>
+  <div class="card"><h3>S&amp;P Global note</h3><p>${esc(e.spnote)}</p></div>`;
+  wirePicker("edition");
+  document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>{fuel=b.dataset.k;vEdition()});
+  $("#secs").innerHTML=e.sections.filter(s=>fuel==="all"||s.k===fuel).map(s=>
+   `<section class="sec" id="s-${s.k}"><header><h3>${esc(s.name)}</h3><span class="meta">${s.stories.length} of 5 stories</span></header>
+   <div class="price">${s.price}</div>
+   <div class="insight"><strong>Insight</strong>${esc(s.insight)}</div>
+   <ol class="stories">${s.stories.map(story).join("")}</ol>
+   ${s.gap?`<div class="gap">${esc(s.gap)}</div>`:""}</section>`).join("");
+}
+function vChanges(){
+  const e=ed(),c=CHANGES[e.id];
+  $("#main").innerHTML=picker()+`<h2>What changed</h2><p class="sub">${esc(e.date)}</p>`+(c?
+  `<p>${esc(c.intro)}</p><div class="card scroll"><table><thead><tr><th>Item</th><th>Before</th><th>Now</th><th>Move</th><th>Note</th></tr></thead><tbody>${c.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td class="${r[3]==="up"?"up":r[3]==="down"?"dn":""}">${r[3]}</td><td>${esc(r[4])}</td></tr>`).join("")}</tbody></table></div>
+   <div class="card" style="margin-top:14px"><h3>Edition notes</h3><ul class="plain">${c.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`:`<p>No change log for this edition.</p>`);
+  wirePicker("changes");
+}
+function vArchive(){
+  $("#main").innerHTML=`<h2>Edition archive</h2><p class="sub">Newest first. Open any past edition to see it as published.</p>
+  <div class="card scroll"><table><thead><tr><th>Date</th><th>Headline</th><th>Type</th><th></th></tr></thead><tbody>${EDITIONS.map((e,i)=>`<tr><td>${esc(e.date)}${i===0?' <span class="badge x">latest</span>':""}</td><td>${esc(e.headline)}</td><td>${esc(e.mode)}</td><td><a href="#edition--${e.id}">Open</a> · <a href="#changes--${e.id}">Changes</a></td></tr>`).join("")}</tbody></table></div>
+  <p class="gap">Only one edition exists so far. Each daily run adds a new one above this.</p>`;
+}
+function vBrief(){
+  const b=BRIEF;
+  $("#main").innerHTML=`<div class="hero"><h2>${esc(b.title)}</h2><p>${esc(b.lede)}</p><p class="meta">Live site: <a href="${esc(b.link)}" target="_blank" rel="noopener">${esc(b.link)}</a></p></div>
+  <div class="grid2">${b.cards.map(c=>`<div class="card"><h3>${esc(c[0])}</h3><p>${esc(c[1])}</p></div>`).join("")}</div>
+  <div class="card" style="margin-top:14px"><h3>Current limits</h3><ul class="plain">${b.limits.map(l=>`<li>${esc(l)}</li>`).join("")}</ul></div>`;
+}
+addEventListener("hashchange",route);route();
+</script>
