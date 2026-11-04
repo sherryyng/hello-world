@@ -194,7 +194,7 @@ function whyHTML(){
   all.forEach(function(i){i.src.split(";").forEach(function(s){srcs[s.trim()]=1})});
   var nsrc=Object.keys(srcs).length;
   var covRows=e.sections.map(function(s){var x=s.items.filter(function(i){return i.c==="x"}).length;return '<tr><td>'+s.name+'</td><td>'+s.items.length+'</td><td>'+x+'</td></tr>'}).join('');
-  return '<div class="sect"><div class="eb2">Why rely on this desk</div><h2>One page instead of many sites</h2></div><p class="lede">Reference site: <a href="https://sherry-energy-desk.golden-islan-7474.chatgpt.site/" target="_blank" rel="noopener">sherry-energy-desk.golden-islan-7474.chatgpt.site</a>. This page merges its saved editions with added research on the fuels it does not cover.</p>'+
+  return '<div class="sect"><div class="eb2">Why rely on this desk</div><h2>One page instead of many sites</h2></div><p class="lede">Daily editions are archived, and each one adds research on the fuels that most news sites skip: biofuels, methanol, ethanol, ammonia and gasoil.</p>'+
   '<div class="grid"><div class="card"><div class="big">1 page</div><h3>Instead of '+nsrc+' sources</h3><p>The latest edition draws on '+nsrc+' outlets and data providers, including Ship &amp; Bunker, Maritime Executive, Manifold Times, Reuters, S&amp;P Global and Argus.</p></div>'+
   '<div class="card"><div class="big">'+e.sections.length+' sections</div><h3>Every grade in one view</h3><p>Crude, bunkers, LPG and LNG, plus biofuels, methanol, ethanol, ammonia, gasoil and IMO regulation.</p></div>'+
   '<div class="card"><div class="big">3 labels</div><h3>Fact-check on every item</h3><p>Each story is marked cross-checked, single source, or conflicting. Disagreeing sources are shown side by side.</p></div></div>'+
