@@ -1,4 +1,4 @@
-# Sherry Energy Desk: daily update routine
+# Energy Desk: daily update routine
 
 The desk is a single page, `index.html`, built from data in this folder.
 The old chatgpt.site desk is frozen at 2 Nov 2026 and is no longer updated. Editions up to 2 Nov were
