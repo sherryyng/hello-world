@@ -1,0 +1,276 @@
+<title>Sherry Energy Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap">
+<style>
+/* Layout: a dispatch-style desk. Sticky masthead with edition switcher, tab bar, then product sections as ruled ledgers; prices as a mono table. */
+:root{
+  --bg:#EDF1F3; --surface:#FFFFFF; --ink:#13232C; --muted:#56666F; --rule:#CBD5DA;
+  --accent:#0A5A86; --accent-soft:#DCEBF3; --ok:#1B7A4B; --warn:#A8620A; --bad:#B3302B;
+  --display:'Source Serif 4',Georgia,serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1A20; --surface:#16252D; --ink:#E3EBEF; --muted:#93A5AF; --rule:#2B3E48;
+  --accent:#6BB8E0; --accent-soft:#1B3442; --ok:#5FCB92; --warn:#E5A04D; --bad:#F08A84; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A20; --surface:#16252D; --ink:#E3EBEF; --muted:#93A5AF; --rule:#2B3E48;
+  --accent:#6BB8E0; --accent-soft:#1B3442; --ok:#5FCB92; --warn:#E5A04D; --bad:#F08A84; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--rule)}
+.mast{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding-block:12px 8px}
+h1{font-family:var(--display);font-size:1.5rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{font-family:var(--mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.ed{display:flex;gap:6px;align-items:center}
+.ed button,.ed select{font:inherit;font-family:var(--mono);font-size:.8rem;background:var(--bg);color:var(--ink);border:1px solid var(--rule);padding:6px 10px;border-radius:4px;cursor:pointer}
+.ed button:disabled{opacity:.4;cursor:default}
+nav{display:flex;gap:2px;overflow-x:auto}
+nav button{font:inherit;font-weight:500;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 14px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding-block:22px 48px}
+h2{font-family:var(--display);font-size:1.3rem;margin:0 0 4px;text-wrap:balance}
+h3{font-family:var(--display);font-size:1.1rem;margin:0}
+.lede{color:var(--muted);margin:0 0 18px;max-width:68ch}
+.banner{background:var(--accent-soft);border-radius:4px;padding:12px 14px;margin-bottom:22px;max-width:76ch}
+.banner strong{font-weight:600}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.toc a{font-family:var(--mono);font-size:.75rem;text-decoration:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);padding:4px 9px;border-radius:3px}
+.toc a:hover{border-color:var(--accent)}
+.prod{background:var(--surface);border:1px solid var(--rule);border-radius:6px;margin-bottom:18px;scroll-margin-top:130px}
+.prod>.hd{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;align-items:baseline;padding:14px 16px 10px;border-bottom:1px solid var(--rule)}
+.px{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.px b{color:var(--ink);font-weight:500}
+.so{padding:10px 16px;font-size:.9rem;background:var(--accent-soft);border-bottom:1px solid var(--rule)}
+.so span{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-right:8px}
+ol.items{list-style:none;margin:0;padding:0}
+ol.items li{padding:12px 16px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr;gap:4px;min-width:0}
+ol.items li:last-child{border-bottom:0}
+.t{font-weight:600;text-wrap:pretty}
+.n{color:var(--muted);font-size:.9rem}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-family:var(--mono);font-size:.72rem;color:var(--muted);align-items:center}
+.pill{border:1px solid currentColor;border-radius:99px;padding:0 8px;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em}
+.pill.x{color:var(--ok)} .pill.s{color:var(--warn)} .pill.c{color:var(--bad)}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:500}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.na{color:var(--muted);font-style:italic}
+tr:last-child td{border-bottom:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:22px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;min-width:0}
+.card h3{margin-bottom:6px}
+.card p{margin:0;color:var(--muted);font-size:.92rem}
+.big{font-family:var(--mono);font-size:1.7rem;font-weight:500;color:var(--accent);line-height:1.1;margin-bottom:6px}
+ul.plain{margin:6px 0 0;padding-left:18px} ul.plain li{margin-bottom:4px}
+.list-ed{display:grid;gap:8px}
+.list-ed a.row{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;align-items:baseline;background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+.list-ed a.row:hover{border-color:var(--accent)}
+.cov td:not(:first-child){text-align:center;font-family:var(--mono)}
+footer{border-top:1px solid var(--rule);padding-block:16px 28px;color:var(--muted);font-size:.8rem}
+@media (prefers-reduced-motion:no-preference){.prod{transition:border-color .15s}}
+</style>
+
+<header>
+ <div class="wrap">
+  <div class="mast">
+   <div><h1>Sherry Energy Desk</h1><div class="sub">Marine fuels · Golden Island Pte Ltd</div></div>
+   <div class="ed" role="group" aria-label="Edition">
+    <button id="prev" aria-label="Older edition">&larr;</button>
+    <select id="edsel" aria-label="Choose edition"></select>
+    <button id="next" aria-label="Newer edition">&rarr;</button>
+   </div>
+  </div>
+  <nav role="tablist" id="tabs"></nav>
+ </div>
+</header>
+
+<main class="wrap" id="view"></main>
+<footer class="wrap">Sources are cited on every item. Prices are the latest figures found in public reporting, not a live or licensed feed, and each carries its own date. Not trading advice.</footer>
+
+<script>
+/* ============ EDITION DATA ============
+ Each daily run appends one object to EDITIONS (newest last). Item ids stay stable so "What changed" can diff editions.
+ conf: x = cross-checked (2+ sources agree), s = single source, c = sources conflict or low-quality/unverified. */
+var EDITIONS = [{
+ date:"2026-11-04", label:"Wed 4 Nov 2026", baseline:true,
+ coverage:"News indexed through early Oct 2026 for most products; Aug–Sep 2026 for some. Nothing dated 1–4 Nov could be retrieved.",
+ headline:"Singapore bunker demand is holding up through the Hormuz disruption, while biofuel blends and alternative-fuel licensing are the moving parts.",
+ takeaways:[
+  "Brent stays elevated: EIA puts Q4 2026 at $105/bbl and Goldman sees $90 by December. Hormuz flows are the swing factor.",
+  "Singapore VLSFO reached $869/mt on 2 Oct (+$76), and B30-VLSFO $1,041/mt. September sales slipped 0.8% m/m but year-to-date volume is +1.8%, led by HSFO.",
+  "Biofuel blend sales are down roughly half year-to-date but rebounded 43% in September. Sources disagree on the exact tonnage.",
+  "Eight new LNG bunkering licences took effect 1 Sep; ammonia bunkering has its first MPA authorisation, with trials now expected in Q4 2027.",
+  "The IMO Net Zero Framework vote is due this month. The outcome could not be confirmed and is the main item to check tomorrow."],
+ prices:[
+  {p:"Brent crude",v:"~$102.60/bbl",d:"5 Oct 2026",s:"MoneyMagpie",u:"https://www.moneymagpie.com/investment-articles/oil-price-prediction-october-2026",n:"Single low-grade source. EIA put September spot average at $114."},
+  {p:"VLSFO / LSFO (Singapore)",v:"$869/mt (+$76)",d:"2 Oct 2026",s:"Engine; Ship & Bunker",u:"https://shipandbunker.com/prices/apac/sea/sg-sin-singapore",n:"September average $870/mt (Ship & Bunker). No separate LSFO series found."},
+  {p:"B30-VLSFO (Singapore)",v:"$1,041/mt",d:"2 Oct 2026",s:"Engine",u:"https://engine.online/news",n:"B24 and B100 price not found for 2026."},
+  {p:"UCOME FOB Netherlands",v:"$1,728/t",d:"3 Sep 2026",s:"cbonds listing",u:"https://cbonds.pl/indexes/225173/",n:"Data listing, not verified against Argus. Asia UCOME price not found."},
+  {p:"LPG propane (Saudi CP)",v:"$750/t",d:"Apr 2026",s:"Argus (via search)",u:"https://www.argusmedia.com/en/news-and-insights/market-opinion-and-analysis-blog/lpg-price-february-update",n:"April contract price, +$205/t. Later months not found."},
+  {p:"LNG bunker sales (Singapore)",v:"51,500 mt",d:"Sep 2026",s:"Ship & Bunker; Engine",u:"https://shipandbunker.com/news/apac/640099-analysis-singapore-bunker-sales-slip-in-september-but-hsfo-drives-year-to-date-growth",n:"Volume, not price. -12.1% m/m, +6.2% y/y."},
+  {p:"Methanol, ethanol, ammonia, gasoil",v:null,d:"",s:"",u:"",n:"No verified 2026 price found in public sources. Platts or Argus subscriber data is needed."}
+ ],
+ sections:[
+ {k:"crude",name:"Crude & macro",so:"Sets the cost base for every grade below.",items:[
+  {id:"eia-oct",t:"EIA lifts Q4 2026 Brent forecast to $105/bbl, up $14",n:"October STEO assumes Middle East flows stay constrained. September Brent spot averaged $114.",src:"EIA STEO (via search summary)",u:"https://www.eia.gov/outlooks/steo/",d:"Oct 2026",c:"s"},
+  {id:"gs-dec",t:"Goldman Sachs raises December 2026 Brent forecast to $90 from $85",n:"Cites persistent supply risk. Reported by Reuters.",src:"BOE Report",u:"https://boereport.com/2026/10/11/goldman-sachs-lifts-december-2026-brent-price-forecast-to-90-bbl/amp/",d:"11 Oct 2026",c:"s"},
+  {id:"fitch",t:"Fitch Solutions sees 2026 Brent average near $83, falling to $71 in 2027",n:"Gap between the EIA and Fitch views shows how much rides on whether Hormuz disruption persists.",src:"JM Financial",u:"https://www.jmfinancialservices.in/market-news-and-insights/1735730",d:"Oct 2026",c:"s"},
+  {id:"brent-5oct",t:"Brent near $102.60 on 5 Oct after dipping to about $97.70",n:"Single market-commentary source.",src:"MoneyMagpie",u:"https://www.moneymagpie.com/investment-articles/oil-price-prediction-october-2026",d:"5 Oct 2026",c:"c"}
+ ]},
+ {k:"lsfo",name:"LSFO / VLSFO",so:"Core grade for Golden Island's physical supply. Demand is firm and price volatile.",px:"VLSFO <b>$869/mt</b> · 2 Oct",items:[
+  {id:"vlsfo-oct2",t:"Singapore VLSFO up $76 to $869/mt on 2 October",n:"Previous reading was $798/mt on 31 Jul. September average $870/mt.",src:"Engine; Ship & Bunker",u:"https://shipandbunker.com/prices/apac/sea/sg-sin-singapore",d:"2 Oct 2026",c:"x"},
+  {id:"sg-sep-sales",t:"Singapore September bunker sales fall 0.8% m/m to 4.67m mt; year-to-date +1.8%",n:"First nine months total 41.97m mt, with HSFO up 10.4%. Engine reports a 1% fall on preliminary MPA data.",src:"Ship & Bunker; Engine",u:"https://shipandbunker.com/news/apac/640099-analysis-singapore-bunker-sales-slip-in-september-but-hsfo-drives-year-to-date-growth",d:"Oct 2026",c:"x"},
+  {id:"sg-h1",t:"Middle East conflict drives Singapore marine fuel sales higher in H1 2026",n:"Ship & Bunker also reports sales continuing at record pace despite the Hormuz crisis.",src:"Baird Maritime; Ship & Bunker",u:"https://www.bairdmaritime.com/amp/story/shipping/ports/middle-east-conflict-drives-singapore-marine-fuel-sales-higher-in-h1-2026",d:"H1 2026",c:"x"},
+  {id:"sb-fcst",t:"Ship & Bunker Q4 2026 VLSFO forecasts differ by page: $610 vs $673/mt",n:"Model outputs, well below the spot level. Treat as unreliable.",src:"Ship & Bunker",u:"https://shipandbunker.com/prices/apac/sea/sg-sin-singapore",d:"2026",c:"c"}
+ ]},
+ {k:"bio",name:"Biofuel blends: B24 / B30",so:"Volumes fell sharply year on year; the September rebound is the signal to watch.",px:"B30-VLSFO <b>$1,041/mt</b> · 2 Oct",items:[
+  {id:"bio-ytd",t:"Singapore biofuel blend sales Jan–Sep down 48% y/y",n:"Ship & Bunker says 598,300 mt; Engine says 571,000 mt versus 1.14m mt a year earlier. Totals differ by source.",src:"Ship & Bunker; Engine",u:"https://shipandbunker.com/news/apac/640099-analysis-singapore-bunker-sales-slip-in-september-but-hsfo-drives-year-to-date-growth",d:"Oct 2026",c:"c"},
+  {id:"bio-sep",t:"Bio-blended bunker sales rise 43% in September to 81,000 mt",n:"Bright spot in an otherwise weak year.",src:"Engine",u:"https://engine.online/news/singapore-bio-bunker-sales-surged-in-september-while-lng-sales-declined-82d8",d:"Oct 2026",c:"s"},
+  {id:"b30-px",t:"B30-VLSFO priced at $1,041/mt on 2 October",n:"A premium of about $172/mt over VLSFO the same day.",src:"Engine",u:"https://engine.online/news",d:"2 Oct 2026",c:"s"},
+  {id:"mpa-b30",t:"MPA raised the biofuel limit for conventional bunker tankers to B30 from B25",n:"Supply above B30 needs MPA approval. Measure dates from March 2025.",src:"Offshore Energy",u:"https://offshore-energy.biz/?p=759549",d:"Mar 2025",c:"s"},
+  {id:"vitol-barge",t:"Vitol's Marine Future barge enabled B24, B30 and up to B100 supply in Singapore",n:"Background item from 2024.",src:"Hellenic Shipping News",u:"https://www.hellenicshippingnews.com/vitol-bunkers-takes-delivery-of-first-biofuel-barge-in-singapore/",d:"Feb 2024",c:"x"}
+ ]},
+ {k:"ucome",name:"B100 / UCOME",so:"Feedstock tightness keeps pure biodiesel expensive; Asian price discovery is thin.",px:"UCOME FOB NL <b>$1,728/t</b> · 3 Sep",items:[
+  {id:"uco-ara",t:"ARA used cooking oil moves up sharply in the week to 10 September",n:"Supported by a firmer UCOME biodiesel market.",src:"QCIntel",u:"https://www.qcintel.com/biofuels/article/european-feedstocks-uco-up-on-biodiesel-strength-vegoil-gasoil-pressured-72755.html",d:"10 Sep 2026",c:"s"},
+  {id:"ucome-nl",t:"UCOME FOB Netherlands listed at $1,728/t on 3 September",n:"From a data listing; not checked against Argus.",src:"cbonds",u:"https://cbonds.pl/indexes/225173/",d:"3 Sep 2026",c:"c"},
+  {id:"china-ucome",t:"Indicative bids for Chinese UCOME surface as Southeast Asia UCOME holds steady",n:"No price levels published in the free text.",src:"QCIntel",u:"https://www.qcintel.com/biofuels/article/asia-biofuels-china-ucome-bid-emerges-se-a-ucome-price-spread-wide-69278.html",d:"21 Jul 2026",c:"s"},
+  {id:"uco-usg",t:"US Gulf delivered UCO hit a four-year high of 84.5 c/lb on 15 May",n:"Feedstock cost pressure for biodiesel producers.",src:"Fastmarkets",u:"https://www.fastmarkets.com/insights/us-china-summit-policy-trade-developments-this-week-cloud-outlook-for-global-biofuel-feedstock-markets/",d:"15 May 2026",c:"s"},
+  {id:"norden-b100",t:"Norden completed the first B100 bunkering in Singapore",n:"Background item from 2024. Link not captured.",src:"Search summary",u:"",d:"May 2024",c:"s"}
+ ]},
+ {k:"meoh",name:"Methanol",so:"Golden Island is named in green methanol bunkering trials. Singapore volumes still trail Shanghai.",items:[
+  {id:"meoh-lic",t:"MPA licenses three methanol bunker suppliers from 1 January 2026",n:"Global Energy Trading has completed deliveries at anchorage and alongside PSA Pasir Panjang.",src:"Ship & Bunker",u:"https://shipandbunker.com/news/world/786488-fratelli-cosulich-to-add-methanol-to-its-singapore-offer",d:"2026",c:"s"},
+  {id:"meoh-sha",t:"Shanghai outsold Singapore in methanol bunkers in 2025",n:"About 10,000 mt of green methanol in Shanghai versus roughly 3,000 mt in Singapore.",src:"Ship & Bunker",u:"https://shipandbunker.com/news/apac/938720-shanghai-outpaced-singapore-in-methanol-bunker-sales-in-2025",d:"2026",c:"s"},
+  {id:"meoh-cma",t:"Shanghai completes China's first simultaneous LNG and green methanol bunkering",n:"CMA CGM named in the headline.",src:"QCIntel",u:"https://www.qcintel.com/ammonia/article/cma-cgm-refuels-with-green-methanol-at-shanghai-port-71090.html",d:"17 Aug 2026",c:"s"},
+  {id:"meoh-gi",t:"Golden Island to start green methanol bunkering trials with an IMO Type 2 newbuilding",n:"Original announcement date not captured.",src:"Manifold Times",u:"https://www.manifoldtimes.com/news/singapore-golden-island-to-start-green-methanol-bunkering-trials-with-imo-type-2-newbuilding/",d:"n/c",c:"s"},
+  {id:"meoh-orders",t:"Alternative-fuel vessel orders: sources conflict on 2026 totals",n:"One report says 242 orders in eight months (+27%). DNV shows 137 in H1 versus 155 a year earlier.",src:"DNV (via search)",u:"https://www.rivieramm.com/news-content-hub/multi-fuel-future-takes-shape-in-singapore-87579",d:"2026",c:"c"}
+ ]},
+ {k:"etoh",name:"Ethanol",so:"Export strength driven by supply-security buying. E15 policy could cap US export volume.",items:[
+  {id:"etoh-us",t:"US ethanol exports run ahead of last year's record: +12% by volume through June",n:"RFA says Q1 exports were 638m gallons, +20% y/y.",src:"RFD-TV; USDA",u:"https://www.rfdtv.com/ethanol-markets-mixed-as-domestic-use-softens-exports-surge?p=21",d:"2026",c:"x"},
+  {id:"etoh-br",t:"Datagro sees Brazil ethanol exports at 2.2bn litres next season, from 1bn",n:"USDA calls Brazil the main unknown on the supply side.",src:"Advanced Biofuels USA",u:"https://advancedbiofuelsusa.info/usda-report-highlights-ethanol-export-wildcards",d:"2026",c:"x"},
+  {id:"etoh-hormuz",t:"US and Brazil exports jump as importers seek fuel during the Hormuz crisis",n:"Reuters-sourced, May 2026.",src:"ARY News",u:"https://arynews.tv/biofuel-exports-surge-amid-global-fuel-crisis",d:"May 2026",c:"s"},
+  {id:"etoh-tariff",t:"US tariffs leave Brazil searching for new ethanol markets, StoneX says",n:"E15 expansion read as added protection for US corn ethanol.",src:"Datamar News",u:"https://datamarnews.com/?p=71625",d:"2026",c:"s"}
+ ]},
+ {k:"lpg",name:"LPG",so:"Relevant to Golden Island's gas and tanker exposure. The Hormuz shock reshaped Asia flows.",px:"Saudi CP propane <b>$750/t</b> · Apr",items:[
+  {id:"lpg-exports",t:"Middle East LPG exports fell 73% to 419,000 b/d in March",n:"Kpler data. Asia pulled more US cargoes.",src:"Antidumping.vn (Kpler)",u:"https://antidumping.vn/asia-increases-lpg-imports-from-the-us-as-middle-eastern-supplies-fall-by-73-n30113.html",d:"Mar 2026",c:"s"},
+  {id:"lpg-cp",t:"Aramco April propane CP set at $750/t, up $205; Gulf spot premiums hit a record $250/t",n:"Reported from Argus and Kpler data.",src:"ChemAnalyst; Argus",u:"https://www.chemanalyst.com/NewsAndDeals/NewsDetails/us-lpg-prices-soar-20-in-march-2026-as-global-supply-disruptions-41959",d:"Mar–Apr 2026",c:"x"},
+  {id:"lpg-sp",t:"S&P Global: Europe and Asia LPG markets are moving in opposite directions",n:"Podcast. Free summary only.",src:"S&P Global",u:"https://www.spglobal.com/energy/en/news-research/podcasts/oil-markets/052126-the-global-lpg-divide-why-europe-and-asia-are-moving-in-opposite-directions",d:"21 May 2026",c:"s"},
+  {id:"lpg-argus",t:"Argus February outlook expected VLGC freight to weaken over 2026",n:"Predates the Hormuz disruption. Superseded.",src:"Argus",u:"https://www.argusmedia.com/en/news-and-insights/market-opinion-and-analysis-blog/lpg-price-february-update",d:"20 Feb 2026",c:"s"}
+ ]},
+ {k:"lng",name:"LNG",so:"Licensing expansion benefits suppliers. Monthly volumes are volatile.",px:"Sep sales <b>51,500 mt</b>",items:[
+  {id:"lng-lic",t:"Eight new LNG bunkering licences effective 1 September 2026",n:"Valid to 31 Aug 2031. Existing licences run to 31 Dec 2026.",src:"MPA via Ship & Bunker",u:"https://shipandbunker.com/news/apac/404864-mpa-grants-eight-lng-bunkering-licences-in-singapore",d:"30 Jul 2026",c:"s"},
+  {id:"lng-sep",t:"Singapore LNG bunker sales fall 12.1% m/m to 51,500 mt in September, +6.2% y/y",n:"Engine reports 52,000 mt versus 59,000 mt in August.",src:"Ship & Bunker; Engine",u:"https://shipandbunker.com/news/apac/640099-analysis-singapore-bunker-sales-slip-in-september-but-hsfo-drives-year-to-date-growth",d:"Oct 2026",c:"x"},
+  {id:"lng-fsu",t:"MPA to invite LNG floating storage licence applications by end-2026",n:"Announced at SIBCON 2026, subject to approvals.",src:"Ship & Bunker",u:"https://shipandbunker.com/news/apac/735871-sibcon-2026-mpa-to-invite-lng-floating-storage-licences-applications-by-end-2026",d:"2026",c:"s"},
+  {id:"lng-2025",t:"2025 Singapore LNG bunkering record: 571,400 mt, up 23%",n:"LNG Prime reports +23.9%; sources differ slightly.",src:"LNG Prime; Ship & Bunker",u:"https://lngprime.com/asia/singapore-lng-bunkering-volumes-hit-new-record-in-2025/174296/",d:"Jan 2026",c:"x"},
+  {id:"lng-800",t:"FueLNG completes its 800th LNG bunkering operation in Singapore",n:"Year not shown in the result.",src:"Manifold Times",u:"https://www.manifoldtimes.com/news/singapore-fuelng-achieves-800th-lng-bunkering-operation-milestone/",d:"n/c",c:"c"}
+ ]},
+ {k:"nh3",name:"Ammonia",so:"Golden Island and Yara have a preliminary supply agreement. First trials slipped to late 2027.",items:[
+  {id:"nh3-zeta",t:"MPA grants first ammonia bunkering authorisation to Itochu's ZETA Bunkering",n:"Effective 15 May 2026 for up to two years. Itochu's 5,000 cbm vessel is due September 2027.",src:"Maritime Executive; Marine Insight",u:"https://maritime-executive.com/article/singapore-issues-first-authorization-for-ammonia-bunkering-trials",d:"May 2026",c:"x"},
+  {id:"nh3-tr",t:"Singapore launches Technical Reference TR 148 for ammonia bunkering",n:"Launched by MPA and Enterprise Singapore at SIBCON 2026. A model contract is in development.",src:"Marine Insight",u:"https://www.marineinsight.com/singapore-authorises-itochus-ammonia-bunkering-trials-at-major-shipping-hub",d:"2026",c:"s"},
+  {id:"nh3-gi",t:"Golden Island and Yara Clean Ammonia sign preliminary, non-binding supply agreement",n:"No timeline disclosed for first deliveries.",src:"Engine",u:"https://engine.online/news/golden-island-and-yara-to-supply-ammonia-for-bunkering-in-singapore-7a60",d:"n/c",c:"s"},
+  {id:"nh3-jp",t:"Sumitomo, K Line and NYK to study an ammonia bunkering vessel for Singapore",n:"FEED study under an MoU.",src:"Ammonia Energy Association",u:"https://ammoniaenergy.org/articles/sumitomo-k-line-and-nyk-to-push-forward-ammonia-bunkering-in-singapore/",d:"2026",c:"s"}
+ ]},
+ {k:"go",name:"Gasoil / MGO",so:"Thin coverage. No 2026 crack or price data was retrievable; older readings shown for context only.",items:[
+  {id:"go-nov25",t:"Singapore 10ppm gasoil crack hit about $29/bbl in mid-November 2025",n:"Stale. Reuters-based report.",src:"Reuters via iTiger",u:"https://www.itiger.com/news/2584936449",d:"Nov 2025",c:"c"},
+  {id:"go-oct25",t:"Singapore gasoil crack versus Dubai averaged $22.99/bbl in October 2025",n:"Stale. Indian government economic report.",src:"FIPI",u:"https://www.fipi.org.in/Policy_Economic_Report/November25/files/basic-html/page31.html",d:"Oct 2025",c:"c"}
+ ]},
+ {k:"reg",name:"Regulation: IMO",so:"Cross-cutting. The vote shapes the long-run case for every alternative fuel above.",items:[
+  {id:"imo-vote",t:"Net Zero Framework adoption vote due November; outcome not yet confirmed",n:"Member states filed a range of amendments ahead of the vote.",src:"QCIntel",u:"https://www.qcintel.com/ammonia/article/imo-member-states-propose-range-of-net-zero-amendments-70535.html",d:"6 Aug 2026",c:"s"},
+  {id:"imo-mepc",t:"MEPC 84: 55 countries backed the framework, 51 favoured reopening or weakening it",n:"Session ended 1 May.",src:"Riviera; Datamar",u:"https://datamarnews.com/noticias/imo-net-zero-framework-survives-assault-but-adoption-remains-uncertain/",d:"1 May 2026",c:"x"},
+  {id:"imo-us",t:"US says it will stay in the IMO but aims to defeat the framework",n:"One report cites threats of port fees and sanctions on backers.",src:"Maritime Executive",u:"https://maritime-executive.com/article/u-s-will-stick-with-the-imo-but-aims-to-defeat-the-net-zero-framework",d:"2026",c:"s"},
+  {id:"imo-oct25",t:"October 2025: IMO voted 57 to 49 to postpone adoption by one year",n:"Background for this month's vote.",src:"Energy Intelligence; V&E",u:"https://www.velaw.com/insights/imo-postpones-adoption-of-net-zero-framework/",d:"Oct 2025",c:"x"}
+ ]}
+ ]
+}];
+
+/* ============ RENDER ============ */
+var TABS=[["edition","Today's edition"],["prices","Prices"],["changes","What changed"],["archive","Archive"],["brief","Management brief"]];
+var CONF={x:["Cross-checked","x"],s:["Single source","s"],c:["Unverified / conflicting","c"]};
+var state={tab:"edition",ed:EDITIONS.length-1};
+var $=function(i){return document.getElementById(i)};
+
+function parseHash(){
+  var h=(location.hash||"").replace("#","");
+  if(h.indexOf("ed-")===0){var i=EDITIONS.findIndex(function(e){return "ed-"+e.date===h});if(i>=0){state.ed=i;state.tab="edition"}}
+  else if(TABS.some(function(t){return t[0]===h}))state.tab=h;
+}
+function go(h){location.hash=h}
+function ed(){return EDITIONS[state.ed]}
+function itemsOf(e){var a=[];e.sections.forEach(function(s){s.items.forEach(function(i){a.push(i)})});return a}
+
+function itemHTML(i){
+  var c=CONF[i.c];
+  return '<li><div class="t">'+i.t+'</div><div class="n">'+i.n+'</div><div class="meta"><span class="pill '+c[1]+'">'+c[0]+'</span><span>'+i.d+'</span><span>'+(i.u?'<a href="'+i.u+'" target="_blank" rel="noopener">'+i.src+'</a>':i.src)+'</span></div></li>';
+}
+function viewEdition(e){
+  var toc=e.sections.map(function(s){return '<a href="#" data-sec="'+s.k+'">'+s.name+'</a>'}).join("");
+  var secs=e.sections.map(function(s){
+    return '<section class="prod" id="sec-'+s.k+'"><div class="hd"><h3>'+s.name+'</h3>'+(s.px?'<div class="px">'+s.px+'</div>':'')+'</div><div class="so"><span>So what</span>'+s.so+'</div><ol class="items">'+s.items.map(itemHTML).join("")+'</ol></section>';
+  }).join("");
+  return '<h2>'+e.label+'</h2><p class="lede">'+e.headline+'</p>'+
+   '<div class="banner"><strong>Coverage note.</strong> '+e.coverage+' Where fewer than five relevant items exist, everything relevant is shown.</div>'+
+   '<div class="toc">'+toc+'</div>'+secs;
+}
+function viewPrices(e){
+  var rows=e.prices.map(function(p){
+    return '<tr><td>'+p.p+'</td>'+(p.v?'<td class="num">'+p.v+'</td><td class="num">'+p.d+'</td><td><a href="'+p.u+'" target="_blank" rel="noopener">'+p.s+'</a></td>':'<td class="na" colspan="3">Not available</td>')+'<td>'+p.n+'</td></tr>';
+  }).join("");
+  return '<h2>Prices</h2><p class="lede">Latest figures found in public reporting for '+e.label+'. Dates differ by row. S&amp;P Global Platts assessments are paywalled, so the figures here come from open sources. The S&amp;P LPG podcast is the only S&amp;P item included.</p><div class="tablewrap"><table><thead><tr><th>Product</th><th>Level</th><th>As of</th><th>Source</th><th>Note</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function viewChanges(){
+  var e=ed(),prev=EDITIONS[state.ed-1];
+  if(!prev){
+    var n=itemsOf(e).length;
+    return '<h2>What changed</h2><p class="lede">Baseline edition for '+e.label+'. There is no earlier edition to compare with.</p><div class="grid"><div class="card"><div class="big">'+n+'</div><h3>Items published</h3><p>Across '+e.sections.length+' sections.</p></div><div class="card"><div class="big">'+itemsOf(e).filter(function(i){return i.c==="x"}).length+'</div><h3>Cross-checked</h3><p>Confirmed by two or more sources.</p></div><div class="card"><div class="big">'+itemsOf(e).filter(function(i){return i.c==="c"}).length+'</div><h3>Flagged</h3><p>Conflicting figures or weak sourcing.</p></div></div><div class="card"><h3>Gaps to close in the next edition</h3><ul class="plain"><li>Outcome of the IMO Net Zero Framework vote.</li><li>Any price or news dated 1–4 November 2026.</li><li>Verified 2026 figures for methanol, ethanol, ammonia, B24, B100 and gasoil prices.</li><li>Resolve the biofuel tonnage gap between Ship &amp; Bunker and Engine.</li></ul></div>';
+  }
+  var pi={};itemsOf(prev).forEach(function(i){pi[i.id]=1});
+  var ci={};itemsOf(e).forEach(function(i){ci[i.id]=1});
+  var added=itemsOf(e).filter(function(i){return !pi[i.id]}),dropped=itemsOf(prev).filter(function(i){return !ci[i.id]});
+  var pp={};prev.prices.forEach(function(p){pp[p.p]=p.v});
+  var moved=e.prices.filter(function(p){return p.v&&pp[p.p]&&pp[p.p]!==p.v});
+  function li(a,f){return a.length?'<ul class="plain">'+a.map(f).join("")+'</ul>':'<p>None.</p>'}
+  return '<h2>What changed</h2><p class="lede">'+e.label+' compared with '+prev.label+'.</p><div class="grid"><div class="card"><h3>New items ('+added.length+')</h3>'+li(added,function(i){return '<li>'+i.t+'</li>'})+'</div><div class="card"><h3>Dropped ('+dropped.length+')</h3>'+li(dropped,function(i){return '<li>'+i.t+'</li>'})+'</div><div class="card"><h3>Price moves ('+moved.length+')</h3>'+li(moved,function(p){return '<li>'+p.p+': '+pp[p.p]+' → '+p.v+'</li>'})+'</div></div>';
+}
+function viewArchive(){
+  var r=EDITIONS.map(function(e,i){return {e:e,i:i}}).reverse().map(function(o){
+    return '<a class="row" href="#ed-'+o.e.date+'"><span><strong>'+o.e.label+'</strong><br><span class="n">'+o.e.headline+'</span></span><span class="px">'+itemsOf(o.e).length+' items'+(o.e.baseline?' · baseline':'')+'</span></a>';
+  }).join("");
+  return '<h2>Edition archive</h2><p class="lede">Every daily edition is kept. Select one to read it as published, or use the arrows at the top to step between days.</p><div class="list-ed">'+r+'</div>';
+}
+function viewBrief(){
+  var e=EDITIONS[EDITIONS.length-1],all=itemsOf(e),srcs={};
+  all.forEach(function(i){i.src.split(";").forEach(function(s){srcs[s.trim()]=1})});
+  var nsrc=Object.keys(srcs).length;
+  var covRows=e.sections.map(function(s){
+    var x=s.items.filter(function(i){return i.c==="x"}).length;
+    return '<tr><td>'+s.name+'</td><td>'+s.items.length+'</td><td>'+x+'</td></tr>';
+  }).join("");
+  return '<h2>Management brief</h2><p class="lede">Why this desk is faster and safer than reading each site and newspaper separately. Reference site: <a href="https://sherry-energy-desk.golden-islan-7474.chatgpt.site/" target="_blank" rel="noopener">sherry-energy-desk.golden-islan-7474.chatgpt.site</a>.</p>'+
+  '<div class="grid"><div class="card"><div class="big">1 page</div><h3>Instead of '+nsrc+' sources</h3><p>The latest edition draws on '+nsrc+' distinct outlets and data providers, including Ship &amp; Bunker, Engine, Maritime Executive, Manifold Times, QCIntel, S&amp;P Global and Argus.</p></div>'+
+  '<div class="card"><div class="big">'+e.sections.length+' fuels</div><h3>Every grade in one view</h3><p>LSFO, B24/B30, B100/UCOME, methanol, ethanol, LPG, LNG, ammonia and gasoil, plus crude and IMO regulation.</p></div>'+
+  '<div class="card"><div class="big">3 labels</div><h3>Fact-check on every item</h3><p>Each story is marked cross-checked, single source, or conflicting. Disagreeing sources are shown side by side, not averaged away.</p></div></div>'+
+  '<div class="card" style="margin-bottom:22px"><h3>Where the edge comes from</h3><ul class="plain"><li><strong>Dated and cited.</strong> Every figure shows its date and links to its source, so stale numbers are visible.</li><li><strong>Gaps are stated.</strong> If a price or story is missing, the desk says so instead of filling it.</li><li><strong>Change tracking.</strong> The What changed tab shows new items, dropped items and price moves against the previous edition.</li><li><strong>Archive.</strong> Past editions stay navigable, so a decision can be traced to what was known that day.</li><li><strong>Golden Island lens.</strong> Each section opens with a one-line so-what for a product tanker owner-operator and physical fuel supplier, and flags items that name the company: methanol trials and the Yara ammonia agreement.</li></ul></div>'+
+  '<h3 style="margin-bottom:8px">Coverage in the latest edition</h3><div class="tablewrap cov" style="margin-bottom:22px"><table><thead><tr><th>Section</th><th>Items</th><th>Cross-checked</th></tr></thead><tbody>'+covRows+'</tbody></table></div>'+
+  '<div class="card"><h3>Limits management should know</h3><ul class="plain"><li>Prices come from open sources and are not a live Platts or Argus feed. For trading or contract pricing, use licensed data.</li><li>The first edition could not retrieve news dated 1–4 November 2026. Coverage runs through roughly early October for most products.</li><li>Several products have no verified 2026 price: methanol, ethanol, ammonia, B24, B100 and gasoil.</li></ul></div>';
+}
+
+function render(){
+  $("tabs").innerHTML=TABS.map(function(t){return '<button role="tab" aria-selected="'+(state.tab===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'</button>'}).join("");
+  $("edsel").innerHTML=EDITIONS.map(function(e,i){return '<option value="'+i+'"'+(i===state.ed?' selected':'')+'>'+e.date+'</option>'}).reverse().join("");
+  $("prev").disabled=state.ed===0;$("next").disabled=state.ed===EDITIONS.length-1;
+  var e=ed(),v={edition:viewEdition,prices:viewPrices,changes:viewChanges,archive:viewArchive,brief:viewBrief}[state.tab];
+  $("view").innerHTML=v(e);
+}
+document.addEventListener("click",function(ev){
+  var t=ev.target.closest("[data-tab]");if(t){go(t.getAttribute("data-tab"));return}
+  var s=ev.target.closest("[data-sec]");if(s){ev.preventDefault();var el=$("sec-"+s.getAttribute("data-sec"));if(el)el.scrollIntoView({behavior:"smooth"})}
+});
+$("prev").onclick=function(){go("ed-"+EDITIONS[state.ed-1].date)};
+$("next").onclick=function(){go("ed-"+EDITIONS[state.ed+1].date)};
+$("edsel").onchange=function(){go("ed-"+EDITIONS[+this.value].date)};
+window.addEventListener("hashchange",function(){parseHash();render()});
+parseHash();render();
+</script>
