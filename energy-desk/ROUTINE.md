@@ -24,6 +24,7 @@ imported from it once and now live in `data/editions.json`. Do not read that sit
 ## Rules
 - Fact-check and cross-reference. Label every item: `x` cross-checked (two or more independent sources),
   `s` single source, `c` conflicting or weak. Show disagreeing figures side by side.
+- Prices on the page are indicative public figures. Traders use Platts and MarketView. Only publish price rows from named, checkable sources; do not use tracker or aggregator sites (for example Farmbucks, Investing.com, Trading Economics, cbonds, relays of paywalled data).
 - Never fill a gap with an estimate. A missing price or story is shown as not available.
 - Singapore bunker prices come from Ship & Bunker only. Do not use ENGINE for price or volume figures.
   ENGINE may be cited for non-price facts such as lead times, labelled "availability only".
