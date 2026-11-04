@@ -35,7 +35,6 @@ imported from it once and now live in `data/editions.json`. Do not read that sit
 - No coverage note is shown on the page. Keep `mgmt.limitations` factual and short.
 - Golden Island lens: state why an item matters to a product tanker owner-operator and physical fuel
   supplier. Assume no private fleet positions or charter terms. Flag items that name Golden Island.
-- Do not write pronouns for named people. Keep copy plain and short.
 
 ## Notify the owner only when
 - the Ship & Bunker refresh fails or its layout changes,
