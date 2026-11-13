@@ -12,8 +12,8 @@ i = t.find('Latest Prices (Conventional')
 if i < 0: sys.exit('S&B table not found: no access or layout changed')
 t = t[i:]
 num = r'([\d,]+\.\d+)'
-cell = num + r' ([▼▲]) ' + num + r' ' + num + r' – ' + num + r' \(' + num + r'\)'
-pat = r'(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\w{3}) (\d+) \w{3} \d+ \w{3} ' + ' '.join([cell] * 4) + ' ' + num + r' ([▼▲]) ' + num
+cell = num + r' ([▼▲▶]) ' + num + r' ' + num + r' – ' + num + r' \(' + num + r'\)'
+pat = r'(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\w{3}) (\d+) \w{3} \d+ \w{3} ' + ' '.join([cell] * 4) + ' ' + num + r' ([▼▲▶]) ' + num
 mons = {m: i + 1 for i, m in enumerate('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split())}
 f = lambda s: float(s.replace(',', ''))
 import datetime
@@ -22,8 +22,8 @@ rows = []
 for m in re.finditer(pat, t):
     g = m.groups(); mo = mons[g[0]]; d = int(g[1])
     yr = today.year if mo <= today.month else today.year - 1
-    c = lambda o: dict(p=f(g[o]), ch=(1 if g[o + 1] == '▲' else -1) * f(g[o + 2]), hi=f(g[o + 3]), lo=f(g[o + 4]))
-    rows.append(dict(d='%d-%02d-%02d' % (yr, mo, d), vl=c(2), hs=c(8), ls=c(14), mg=c(20), sp=f(g[26]), spc=(1 if g[27] == '▲' else -1) * f(g[28])))
+    c = lambda o: dict(p=f(g[o]), ch={'▲': 1, '▼': -1, '▶': 0}[g[o + 1]] * f(g[o + 2]), hi=f(g[o + 3]), lo=f(g[o + 4]))
+    rows.append(dict(d='%d-%02d-%02d' % (yr, mo, d), vl=c(2), hs=c(8), ls=c(14), mg=c(20), sp=f(g[26]), spc={'▲': 1, '▼': -1, '▶': 0}[g[27]] * f(g[28])))
 if len(rows) < 5: sys.exit('Parsed only %d rows: layout probably changed' % len(rows))
 old = {r['d']: r for r in json.load(open(R / 'data/sb.json'))}
 new = sum(1 for r in rows if r['d'] not in old)
